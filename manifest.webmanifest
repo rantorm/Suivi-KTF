@@ -1,0 +1,33 @@
+{
+  "id": "./",
+  "name": "SEHO MARO KANTO 2.0",
+  "short_name": "Seho Maro Kanto",
+  "description": "Tableau de bord de suivi de communication de SEHO MARO KANTO 2.0",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4f1e9",
+  "theme_color": "#17633f",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
