@@ -1,4 +1,4 @@
-const CACHE_NAME = 'seho-maro-kanto-pwa-v1';
+const CACHE_NAME = 'smk20-v3';
 const APP_SHELL = [
   './',
   './index.html',
