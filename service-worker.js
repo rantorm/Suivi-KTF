@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smk20-v3';
+const CACHE_NAME = 'pilotcom-v1';
 const APP_SHELL = [
   './',
   './index.html',
@@ -20,7 +20,11 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter((key) => key.startsWith('seho-maro-kanto-') && key !== CACHE_NAME).map((key) => caches.delete(key)));
+    await Promise.all(
+      keys
+        .filter((key) => key !== CACHE_NAME && (key.startsWith('pilotcom-') || key.startsWith('smk20-') || key.startsWith('seho-maro-kanto-')))
+        .map((key) => caches.delete(key))
+    );
     await self.clients.claim();
   })());
 });

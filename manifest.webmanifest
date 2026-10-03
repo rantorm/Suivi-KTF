@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "SEHO MARO KANTO 2.0",
-  "short_name": "Seho Maro Kanto",
-  "description": "Tableau de bord de suivi de communication de SEHO MARO KANTO 2.0",
+  "name": "Pilotage Com",
+  "short_name": "PilotCom",
+  "description": "Application de pilotage de communication multi-campagnes",
   "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",
