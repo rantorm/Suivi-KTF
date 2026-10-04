@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Pilotage Com",
-  "short_name": "PilotCom",
-  "description": "Application de pilotage de communication multi-campagnes",
+  "name": "Kanton'ny Fanantenana",
+  "short_name": "Kanton",
+  "description": "Pilotage des activités — Kanton'ny Fanantenana",
   "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",
@@ -11,23 +11,8 @@
   "background_color": "#f4f1e9",
   "theme_color": "#17633f",
   "icons": [
-    {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icons/icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    {"src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "./icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
   ]
 }

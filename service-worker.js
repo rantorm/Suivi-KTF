@@ -1,13 +1,5 @@
-const CACHE_NAME = 'pilotcom-v2';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './manifest.webmanifest',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-512-maskable.png',
-  './icons/apple-touch-icon.png'
-];
+const CACHE_NAME = 'kanton-v1';
+const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png','./icons/icon-512-maskable.png','./icons/apple-touch-icon.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
@@ -21,8 +13,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
     await Promise.all(
-      keys
-        .filter((key) => key !== CACHE_NAME && (key.startsWith('pilotcom-') || key.startsWith('smk20-') || key.startsWith('seho-maro-kanto-')))
+      keys.filter((key) => key !== CACHE_NAME && (key.startsWith('kanton-') || key.startsWith('pilotcom-') || key.startsWith('smk20-') || key.startsWith('seho-maro-kanto-')))
         .map((key) => caches.delete(key))
     );
     await self.clients.claim();
