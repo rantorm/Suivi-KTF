@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17633f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kanton'ny Fanantenana">
+<meta name="description" content="Pilotage des activités — Kanton'ny Fanantenana">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<title>Kanton'ny Fanantenana — Pilotage</title>
+<style>
+:root{--bg:#f4f1e9;--surface:#fffdf8;--surface2:#f8f6f0;--ink:#18342a;--ink2:#315044;--muted:#718078;--line:#dfe5de;--green:#17633f;--greenSoft:#e8f2ec;--gold:#b58a20;--goldSoft:#fbf3d9;--red:#b95648;--redSoft:#f8e9e6;--blue:#3d7180;--purple:#6b4c9a;--shadow:0 8px 24px rgba(24,52,42,.08);--r:14px;--tap:44px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45;min-height:100vh;padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+button,input,textarea,select{font:inherit}button{touch-action:manipulation;cursor:pointer}
+.container{width:min(1080px,100%);margin:auto;padding:12px 14px 20px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+.logo h1{font-family:Georgia,serif;color:var(--green);font-size:clamp(1.2rem,3.5vw,1.7rem);line-height:1.15}
+.logo p{color:var(--muted);font-size:.78rem;margin-top:2px}
+.back-btn{display:inline-flex;align-items:center;gap:4px;min-height:38px;padding:6px 11px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:.73rem;font-weight:800;margin-bottom:8px}
+.badge{min-height:30px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:.68rem;font-weight:800}
+.badge.live{background:var(--greenSoft);border-color:#b8d7c4;color:var(--green)}
+.alerts{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.alert{padding:10px 12px;border:1px solid;border-radius:11px;background:var(--surface);font-size:.78rem}
+.alert strong{display:block}.alert small{color:var(--muted)}
+.danger{background:var(--redSoft);border-color:#e8c0b9}.danger strong{color:var(--red)}
+.warning{background:var(--goldSoft);border-color:#ead9a5}.warning strong{color:#80600d}
+.info{background:var(--greenSoft);border-color:#c4decf}.info strong{color:var(--green)}
+.toolbar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+.btn{min-height:var(--tap);padding:8px 12px;border:1px solid #cbd6cd;border-radius:10px;background:var(--surface);color:var(--ink);font-size:.73rem;font-weight:800}
+.btn.primary{background:var(--green);border-color:var(--green);color:#fff}
+.btn.gold{background:var(--goldSoft);border-color:#dfca88;color:#76590d}
+.btn.dangerBtn{color:var(--red)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green)}
+.kpi.gold:before{background:var(--gold)}.kpi.red:before{background:var(--red)}.kpi.blue:before{background:var(--blue)}
+.klabel{font-size:.58rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:800}
+.kvalue{font-size:1.45rem;font-weight:900;line-height:1.1;margin:3px 0 1px}
+.ksub{font-size:.6rem;color:var(--muted)}
+.section-title{font-size:.92rem;margin:14px 0 8px;font-weight:800}
+.filters{display:flex;gap:6px;overflow:auto;margin-bottom:10px;padding-bottom:3px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.filter{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 10px;font-size:.66rem;font-weight:800;color:var(--muted)}
+.filter.active{background:var(--green);border-color:var(--green);color:#fff}
+.card{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px;margin-bottom:7px;cursor:pointer}
+.card.today{border-color:#d3aa43}.card.overdue{border-color:#dfaaa2}
+.card.soon{border-color:#e0b947;background:linear-gradient(135deg,#fffdf8,#fbf6e8)}
+.card.cancelled{opacity:.55}
+.date{text-align:center}.date b{display:block;font-size:1.2rem;line-height:1}
+.date span{display:block;color:var(--muted);font-size:.55rem;text-transform:uppercase}
+.date em{font-style:normal;color:var(--gold);font-size:.52rem;font-weight:800}
+.phase{display:inline-block;padding:2px 6px;border-radius:99px;font-size:.52rem;font-weight:800;text-transform:uppercase;margin-bottom:2px}
+.title{font-size:.85rem;font-weight:800;margin-bottom:2px}
+.desc{font-size:.7rem;color:var(--muted);margin-bottom:4px}
+.meta{display:flex;gap:4px;flex-wrap:wrap}
+.chip{padding:2px 6px;border:1px solid #e7ebe6;border-radius:5px;background:var(--surface2);color:var(--muted);font-size:.55rem;font-weight:700}
+.chip.crit{background:var(--redSoft);color:var(--red)}.chip.high{background:var(--goldSoft);color:#80600d}
+.chip.done{background:var(--greenSoft);color:var(--green)}
+.iconbtn{width:38px;height:38px;border:1px solid var(--line);border-radius:9px;background:var(--surface);font-size:.9rem}
+.iconbtn.done{background:var(--green);color:#fff;border-color:var(--green)}
+.camp-card,.pole-card{display:flex;gap:11px;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px;margin-bottom:9px;box-shadow:var(--shadow);cursor:pointer}
+.camp-color,.pole-color{width:5px;border-radius:99px;flex-shrink:0}
+.camp-body h3,.pole-card h3{font-size:.95rem;font-weight:800;margin-bottom:2px}
+.camp-meta{font-size:.7rem;color:var(--muted);margin-bottom:5px}
+.camp-stats{display:flex;gap:6px;flex-wrap:wrap}
+.camp-stat{font-size:.62rem;font-weight:750;padding:2px 6px;border-radius:5px;background:var(--surface2)}
+.camp-stat.done{background:var(--greenSoft);color:var(--green)}.camp-stat.over{background:var(--redSoft);color:var(--red)}
+.empty{text-align:center;padding:28px 14px;color:var(--muted);font-size:.82rem}.empty h3{color:var(--ink);margin-bottom:5px}
+.progress{background:var(--ink);color:#fff;border-radius:var(--r);padding:12px;margin-bottom:12px}
+.phead{display:flex;justify-content:space-between;font-size:.78rem;font-weight:800;margin-bottom:7px}.phead b{color:#e7c96b}
+.track{height:7px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,#2b9660,#e0b947);transition:.3s}
+.cal-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px;margin:12px 0}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal div{min-height:30px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:750}
+.cal .head{background:transparent;color:var(--muted);font-size:.52rem}.cal .empty{background:transparent}
+.cal .has{border:1px solid #cbded1}.cal .today{box-shadow:inset 0 0 0 2px #d3aa43}
+.nav-bottom{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:5px 2px calc(5px + env(safe-area-inset-bottom));z-index:100;box-shadow:0 -3px 16px rgba(24,52,42,.06)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 6px;border:none;background:transparent;color:var(--muted);font-size:.58rem;font-weight:800;min-width:52px}
+.nav-item.active{color:var(--green)}.nav-item span{font-size:1.1rem}
+.modal{position:fixed;inset:0;background:rgba(9,29,21,.5);backdrop-filter:blur(5px);display:none;align-items:flex-end;justify-content:center;z-index:1000}
+.modal.open{display:flex}
+.sheet{width:min(620px,100%);max-height:92vh;overflow:auto;background:var(--surface);border-radius:18px 18px 0 0;padding:16px 14px calc(14px + env(safe-area-inset-bottom))}
+.sheet h2{font-size:1rem;margin-bottom:2px}.sheet>p{font-size:.7rem;color:var(--muted);margin-bottom:10px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.field{display:flex;flex-direction:column;gap:3px}.field.full{grid-column:1/-1}
+.field label{font-size:.62rem;font-weight:800;color:var(--ink2)}
+.field input,.field textarea,.field select{width:100%;min-height:42px;border:1px solid #cbd6cd;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px}
+.field textarea{min-height:72px;resize:vertical}
+.poles-check{display:flex;flex-wrap:wrap;gap:5px}
+.poles-check label{display:flex;align-items:center;gap:4px;padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--surface2);font-size:.68rem;font-weight:700}
+.poles-check input{width:15px;height:15px}
+.modalactions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px}.modalactions .btn{width:100%}
+.toast{position:fixed;z-index:2000;bottom:calc(76px + env(safe-area-inset-bottom));left:50%;transform:translate(-50%,10px);opacity:0;background:var(--ink);color:#fff;border-radius:999px;padding:9px 13px;font-size:.7rem;font-weight:800;transition:.2s;pointer-events:none;max-width:calc(100vw - 20px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.view{display:none}.view.active{display:block}
+.resp-list{display:flex;flex-direction:column;gap:7px;margin:8px 0}
+.resp-item{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;background:var(--surface2);border:1px solid var(--line);border-radius:9px;font-size:.82rem;font-weight:700}
+@media(min-width:720px){body{padding-bottom:16px}.nav-bottom{display:none}.modal{align-items:center;padding:18px}.sheet{border-radius:18px;max-height:88vh}.modalactions{display:flex;justify-content:flex-end}.modalactions .btn{width:auto}}
+@media(max-width:719px){.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.kpis{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HOME -->
+<div id="view-home" class="view active">
+  <header>
+    <div class="logo"><h1>Kanton'ny Fanantenana</h1><p>Pilotage des activités · 5 pôles</p></div>
+    <span class="badge live" id="homeBadge">—</span>
+  </header>
+  <div class="alerts" id="homeAlerts"></div>
+  <div class="kpis" id="homeKpis"></div>
+  <h2 class="section-title">📅 Événements proches</h2>
+  <div id="homeEvents"></div>
+  <h2 class="section-title">⚡ Actions prioritaires</h2>
+  <div id="homeActions"></div>
+</div>
+
+<!-- EVENTS -->
+<div id="view-events" class="view">
+  <header><div class="logo"><h1>Événements</h1><p>Campagnes & événements</p></div></header>
+  <div class="toolbar"><button class="btn primary" id="newEventBtn">＋ Nouvel événement</button></div>
+  <div id="eventsList"></div>
+</div>
+
+<!-- DASH -->
+<div id="view-dash" class="view">
+  <button class="back-btn" id="backEvents">← Événements</button>
+  <header>
+    <div class="logo"><h1 id="dashTitle">—</h1><p id="dashSub">—</p></div>
+    <span class="badge" id="dashBadge">—</span>
+  </header>
+  <div class="alerts" id="dashAlerts"></div>
+  <div class="toolbar">
+    <button class="btn primary" id="newActionBtn">＋ Action</button>
+    <button class="btn" id="editEventBtn">✏️ Événement</button>
+    <button class="btn gold" id="waBtn">💬 WhatsApp</button>
+  </div>
+  <div class="kpis" id="dashKpis"></div>
+  <div class="progress"><div class="phead"><span>Progression</span><b id="dashPct">0%</b></div><div class="track"><div class="fill" id="dashFill"></div></div></div>
+  <div class="filters" id="dashFilters">
+    <button class="filter active" data-f="all">Toutes</button>
+    <button class="filter" data-f="todo">À faire</button>
+    <button class="filter" data-f="progress">En cours</button>
+    <button class="filter" data-f="done">Fait</button>
+    <button class="filter" data-f="overdue">Retard</button>
+    <button class="filter" data-f="today">Aujourd'hui</button>
+  </div>
+  <div id="dashTimeline"></div>
+</div>
+
+<!-- PLANNING -->
+<div id="view-planning" class="view">
+  <header><div class="logo"><h1>Planning global</h1><p>Toutes les activités</p></div></header>
+  <div class="toolbar"><button class="btn primary" id="newGlobalActionBtn">＋ Action</button></div>
+  <div class="filters" id="planFilters">
+    <button class="filter active" data-f="all">Toutes</button>
+    <button class="filter" data-f="todo">À faire</button>
+    <button class="filter" data-f="overdue">Retard</button>
+    <button class="filter" data-f="today">Aujourd'hui</button>
+    <button class="filter" data-f="week">7 jours</button>
+  </div>
+  <div class="cal-wrap"><div class="cal" id="globalCal"></div></div>
+  <div id="planTimeline"></div>
+</div>
+
+<!-- POLES -->
+<div id="view-poles" class="view">
+  <header><div class="logo"><h1>Pôles</h1><p>Vue par pôle d'activité</p></div></header>
+  <div id="polesList"></div>
+  <div id="poleDetail" style="display:none">
+    <button class="back-btn" id="backPoles">← Pôles</button>
+    <h2 class="section-title" id="poleTitle">—</h2>
+    <div class="kpis" id="poleKpis"></div>
+    <div class="filters" id="poleFilters">
+      <button class="filter active" data-f="all">Toutes</button>
+      <button class="filter" data-f="owner">Propriétaire</button>
+      <button class="filter" data-f="concerned">Concerné</button>
+      <button class="filter" data-f="todo">À faire</button>
+      <button class="filter" data-f="overdue">Retard</button>
+    </div>
+    <div id="poleTimeline"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="view-settings" class="view">
+  <header><div class="logo"><h1>Paramètres</h1><p>Responsables, profil, données</p></div></header>
+  <h2 class="section-title">👤 Profil</h2>
+  <div class="field" style="margin-bottom:10px"><label>Votre nom</label><input id="userName" placeholder="Prénom / nom"></div>
+  <button class="btn primary" id="saveProfile" style="margin-bottom:18px">Enregistrer le profil</button>
+  <h2 class="section-title">👥 Responsables des pôles</h2>
+  <p style="font-size:.72rem;color:var(--muted);margin-bottom:7px">Liste des personnes auxquelles attribuer des actions.</p>
+  <div class="resp-list" id="respList"></div>
+  <div class="toolbar">
+    <input id="newRespName" placeholder="Nom du responsable" style="flex:1;min-height:42px;border:1px solid #cbd6cd;border-radius:9px;padding:7px 9px;font-size:16px">
+    <button class="btn primary" id="addRespBtn">＋ Ajouter</button>
+  </div>
+  <h2 class="section-title" style="margin-top:20px">💾 Données</h2>
+  <div class="toolbar" style="flex-direction:column">
+    <button class="btn" id="exportBtn" style="width:100%">📤 Exporter (JSON)</button>
+    <button class="btn" id="importBtn" style="width:100%">📥 Importer</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+    <button class="btn dangerBtn" id="resetBtn" style="width:100%">↺ Réinitialiser</button>
+  </div>
+</div>
+</div>
+
+<nav class="nav-bottom">
+  <button class="nav-item active" data-view="home"><span>🏠</span>Accueil</button>
+  <button class="nav-item" data-view="events"><span>📅</span>Événements</button>
+  <button class="nav-item" data-view="planning"><span>📋</span>Planning</button>
+  <button class="nav-item" data-view="poles"><span>🎯</span>Pôles</button>
+  <button class="nav-item" data-view="settings"><span>⚙️</span>Réglages</button>
+</nav>
+
+<div class="modal" id="eventModal"><div class="sheet">
+  <h2 id="eventModalTitle">Nouvel événement</h2>
+  <p>Campagne ou événement de la chorale.</p>
+  <form id="eventForm"><div class="formgrid">
+    <div class="field full"><label>Nom</label><input id="eName" required placeholder="Ex. Seho Maro Kanto 2.0"></div>
+    <div class="field"><label>Début</label><input id="eStart" type="date" required></div>
+    <div class="field"><label>Fin</label><input id="eEnd" type="date" required></div>
+    <div class="field"><label>Heure</label><input id="eTime" type="time" value="14:00"></div>
+    <div class="field"><label>Lieu</label><input id="ePlace" placeholder="FLM 67 Ha"></div>
+    <div class="field full"><label>Description</label><textarea id="eDesc"></textarea></div>
+    <div class="field"><label>Couleur</label><select id="eColor"><option value="#17633f">Vert</option><option value="#b58a20">Or</option><option value="#3d7180">Bleu</option><option value="#b95648">Rouge</option><option value="#6b4c9a">Violet</option></select></div>
+    <div class="field"><label>Statut</label><select id="eStatus"><option value="active">Actif</option><option value="archived">Archivé</option></select></div>
+  </div>
+  <div class="modalactions"><button type="button" class="btn" data-close="eventModal">Fermer</button><button type="submit" class="btn primary">Enregistrer</button></div>
+  </form>
+</div></div>
+
+<div class="modal" id="actionModal"><div class="sheet">
+  <h2 id="actionModalTitle">Nouvelle action</h2>
+  <p>Activité rattachée à un événement.</p>
+  <form id="actionForm"><div class="formgrid">
+    <div class="field full"><label>Événement</label><select id="aEvent"></select></div>
+    <div class="field"><label>Date</label><input id="aDate" type="date" required></div>
+    <div class="field"><label>Statut</label><select id="aStatus"><option value="todo">À faire</option><option value="progress">En cours</option><option value="done">Fait</option><option value="cancelled">Annulée</option></select></div>
+    <div class="field full"><label>Titre</label><input id="aTitle" required></div>
+    <div class="field full"><label>Description</label><textarea id="aDesc"></textarea></div>
+    <div class="field"><label>Pôle propriétaire</label><select id="aOwner"></select></div>
+    <div class="field"><label>Priorité</label><select id="aPrio"><option>Critique</option><option>Haute</option><option selected>Moyenne</option><option>Basse</option></select></div>
+    <div class="field full"><label>Pôles concernés</label><div class="poles-check" id="aConcerned"></div></div>
+    <div class="field"><label>Responsable</label><select id="aResp"><option value="">— Aucun —</option></select></div>
+    <div class="field"><label>Canaux</label><input id="aChannels" placeholder="Facebook, Story…"></div>
+    <div class="field"><label>Rappel</label><select id="aReminder"><option value="none">Aucun</option><option value="same">Jour J</option><option value="1">J-1</option><option value="2">J-2</option><option value="3">J-3</option></select></div>
+    <div class="field"><label>Heure rappel</label><input id="aTime" type="time" value="08:00"></div>
+    <div class="field full"><label>Objectif</label><input id="aObjective"></div>
+  </div>
+  <div class="modalactions"><button type="button" class="btn" data-close="actionModal">Fermer</button><button type="submit" class="btn primary">Enregistrer</button></div>
+  </form>
+</div></div>
+
+<div class="modal" id="waModal"><div class="sheet">
+  <h2>💬 Résumé WhatsApp</h2>
+  <textarea id="waText" style="width:100%;min-height:220px;border:1px solid #cbd6cd;border-radius:9px;padding:9px;font-size:15px"></textarea>
+  <div class="modalactions"><button class="btn" data-close="waModal">Fermer</button><button class="btn primary" id="copyWa">📋 Copier</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE='kanton-v1',HIST='kanton-hist-v1',PROFILE='kanton-profile';
+const POLES=[
+  {id:'admin',label:'Admin',short:'Admin',color:'#3d7180'},
+  {id:'com',label:'Communication',short:'Com',color:'#17633f'},
+  {id:'hetsika',label:'Hetsika sy Fitoriana',short:'Hetsika',color:'#b58a20'},
+  {id:'logistique',label:'Logistique',short:'Logistique',color:'#6b4c9a'},
+  {id:'hira',label:'Hira sy Mozika',short:'Hira',color:'#b95648'}
+];
+const DEFAULT_EVENT={
+  id:'smk-2-0',name:'SEHO MARO KANTO 2.0',start:'2026-09-29',end:'2026-10-31',time:'14:00',place:'FLM 67 Ha',
+  desc:'Concert & campagne',color:'#17633f',status:'active',
+  actions:[
+    {id:1,date:'2026-09-29',title:'Devinette',desc:'Teasing script',status:'todo',prio:'Haute',ownerPole:'com',concernedPoles:['hetsika'],responsibleId:'',channels:'Post+Story',reminder:'none',time:'08:00',objective:'Curiosité'},
+    {id:2,date:'2026-09-30',title:'Affiche officielle',desc:'Pub officielle',status:'todo',prio:'Critique',ownerPole:'com',concernedPoles:['admin'],responsibleId:'',channels:'Feed+Pub',reminder:'none',time:'08:00',objective:'Annonce'},
+    {id:3,date:'2026-10-07',title:'Clip Hanompo Anao',desc:'Clip musical',status:'todo',prio:'Haute',ownerPole:'hira',concernedPoles:['com'],responsibleId:'',channels:'Clip',reminder:'none',time:'08:00',objective:'Répertoire'},
+    {id:4,date:'2026-10-09',title:'Vidéo ankizy',desc:'Behind the scenes',status:'todo',prio:'Haute',ownerPole:'com',concernedPoles:['hetsika','hira'],responsibleId:'',channels:'Reels',reminder:'none',time:'08:00',objective:'Humaniser'},
+    {id:5,date:'2026-10-21',title:'Présentation chorale invitée',desc:'Partenariat',status:'todo',prio:'Haute',ownerPole:'com',concernedPoles:['hetsika','admin'],responsibleId:'',channels:'Post+Vidéo',reminder:'none',time:'08:00',objective:'Invités'},
+    {id:6,date:'2026-10-26',title:'Répétition générale',desc:'Organisation',status:'todo',prio:'Haute',ownerPole:'hira',concernedPoles:['logistique','com'],responsibleId:'',channels:'Story',reminder:'1',time:'08:00',objective:'Préparation'},
+    {id:7,date:'2026-10-31',title:'🎉 JOUR J',desc:'Couverture live',status:'todo',prio:'Critique',ownerPole:'com',concernedPoles:['hetsika','logistique','hira','admin'],responsibleId:'',channels:'Stories+Live',reminder:'same',time:'08:00',objective:'Couverture'}
+  ]
+};
+let state={events:[],responsibles:[],currentEventId:null,currentPole:null};
+let dashFilter='all',planFilter='all',poleFilter='all';
+let editingEventId=null,editingActionId=null;
+
+function load(){
+  try{const raw=localStorage.getItem(STORAGE);
+    if(raw){state=JSON.parse(raw);if(!state.events)state.events=[];if(!state.responsibles)state.responsibles=[];}
+    else{state={events:[JSON.parse(JSON.stringify(DEFAULT_EVENT))],responsibles:[
+      {id:'r1',name:'Resp. Admin'},{id:'r2',name:'Resp. Communication'},{id:'r3',name:'Resp. Hetsika'},
+      {id:'r4',name:'Resp. Logistique'},{id:'r5',name:'Resp. Hira'}
+    ],currentEventId:null,currentPole:null};save();}
+  }catch(e){state={events:[JSON.parse(JSON.stringify(DEFAULT_EVENT))],responsibles:[],currentEventId:null,currentPole:null};}
+}
+function save(){localStorage.setItem(STORAGE,JSON.stringify(state));}
+function getProfile(){try{return JSON.parse(localStorage.getItem(PROFILE)||'{}');}catch(e){return{};}}
+function setProfile(p){localStorage.setItem(PROFILE,JSON.stringify(p));}
+function logH(t,title){const p=getProfile();let h=[];try{h=JSON.parse(localStorage.getItem(HIST)||'[]');}catch(e){}h.unshift({type:t,title,user:p.name||'Anonyme',time:Date.now()});localStorage.setItem(HIST,JSON.stringify(h.slice(0,80)));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function todayStr(){return new Date().toISOString().slice(0,10);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function poleById(id){return POLES.find(p=>p.id===id)||{label:id,short:id,color:'#718078'};}
+function respName(id){const r=state.responsibles.find(x=>x.id===id);return r?r.name:'';}
+function fmtDate(d){if(!d)return'—';const[,m,day]=d.split('-');const mo=['jan','fév','mar','avr','mai','juin','juil','aoû','sep','oct','nov','déc'];return `${+day} ${mo[+m-1]}`;}
+function daysUntil(end,time){const t=new Date(end+'T'+(time||'23:59')+':00');const d=t-new Date();return d<0?0:Math.ceil(d/86400000);}
+function daysTo(ds){return Math.ceil((new Date(ds+'T23:59:59')-new Date())/86400000);}
+function isToday(a){return a.date===todayStr();}
+function isOverdue(a){return a.status!=='done'&&a.status!=='cancelled'&&a.date<todayStr();}
+function isSoon(a){if(a.status==='done'||a.status==='cancelled'||isToday(a)||isOverdue(a))return false;const d=daysTo(a.date);return d>=1&&d<=3;}
+function allActions(){const list=[];state.events.forEach(ev=>{(ev.actions||[]).forEach(a=>list.push({...a,eventId:ev.id,eventName:ev.name,eventColor:ev.color}));});return list;}
+function eventById(id){return state.events.find(e=>e.id===id);}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===name));
+  if(name==='home')renderHome();
+  if(name==='events')renderEvents();
+  if(name==='planning')renderPlanning();
+  if(name==='poles'){document.getElementById('polesList').style.display='';document.getElementById('poleDetail').style.display='none';renderPoles();}
+  if(name==='settings')renderSettings();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.nav-item').forEach(n=>n.onclick=()=>showView(n.dataset.view));
+
+function actionCard(a){
+  const overC=isOverdue(a)?'overdue':'',todayC=isToday(a)?'today':'',soonC=isSoon(a)?'soon':'',cancC=a.status==='cancelled'?'cancelled':'';
+  const[,m,d]=a.date.split('-');const mo=['JAN','FÉV','MAR','AVR','MAI','JUIN','JUIL','AOÛ','SEP','OCT','NOV','DÉC'];
+  let urg='';if(isToday(a)&&a.status!=='done')urg='<em>AUJ</em>';else if(isOverdue(a))urg='<em style="color:var(--red)">RETARD</em>';else if(isSoon(a))urg=`<em>J-${daysTo(a.date)}</em>`;
+  const pol=poleById(a.ownerPole);const prioCls=a.prio==='Critique'?'crit':(a.prio==='Haute'?'high':'');const rn=respName(a.responsibleId);
+  return `<div class="card ${overC} ${todayC} ${soonC} ${cancC}" data-aid="${a.id}" data-eid="${a.eventId}">
+    <div class="date"><b>${+d}</b><span>${mo[+m-1]}</span>${urg}</div>
+    <div><span class="phase" style="background:${pol.color}22;color:${pol.color}">${pol.short}</span>
+    <div class="title">${esc(a.title)}</div><div class="desc">${esc(a.desc||a.eventName||'')}</div>
+    <div class="meta">${a.prio?`<span class="chip ${prioCls}">${esc(a.prio)}</span>`:''}${rn?`<span class="chip">👤 ${esc(rn)}</span>`:''}
+    ${(a.concernedPoles||[]).slice(0,2).map(pid=>`<span class="chip" style="border-color:${poleById(pid).color}55">${poleById(pid).short}</span>`).join('')}
+    ${a.status==='done'?`<span class="chip done">✓ Fait</span>`:''}</div></div>
+    <div><button class="iconbtn ${a.status==='done'?'done':''}" data-toggle="${a.id}" data-eid="${a.eventId}">${a.status==='done'?'✓':'○'}</button></div></div>`;
+}
+function bindActionCards(sel){
+  document.querySelectorAll(sel+' .card[data-aid]').forEach(card=>{
+    card.onclick=e=>{if(e.target.closest('[data-toggle]'))return;openActionModal(card.dataset.aid,card.dataset.eid);};
+  });
+  document.querySelectorAll(sel+' [data-toggle]').forEach(btn=>{
+    btn.onclick=e=>{e.stopPropagation();const ev=eventById(btn.dataset.eid);if(!ev)return;const a=ev.actions.find(x=>x.id==btn.dataset.toggle);if(!a)return;
+      a.status=a.status==='done'?'todo':'done';logH(a.status==='done'?'Terminée':'Rouverte',a.title);save();refreshCurrent();toast(a.status==='done'?'Fait ✓':'Rouverte');};
+  });
+}
+function refreshCurrent(){
+  const v=document.querySelector('.view.active');if(!v)return;const id=v.id.replace('view-','');
+  if(id==='home')renderHome();else if(id==='events')renderEvents();else if(id==='dash')renderDash();
+  else if(id==='planning')renderPlanning();else if(id==='poles'&&state.currentPole)openPole(state.currentPole);
+}
+
+function renderHome(){
+  const acts=allActions().filter(a=>a.status!=='cancelled');
+  const over=acts.filter(isOverdue),today=acts.filter(isToday),soon=acts.filter(isSoon);
+  const activeEv=state.events.filter(e=>e.status!=='archived');
+  document.getElementById('homeBadge').textContent=activeEv.length+' événement'+(activeEv.length>1?'s':'');
+  const alerts=[];
+  if(over.length)alerts.push(`<div class="alert danger"><strong>${over.length} en retard</strong><small>${over.slice(0,4).map(a=>a.title).join(', ')}</small></div>`);
+  if(today.length)alerts.push(`<div class="alert warning"><strong>${today.length} aujourd'hui</strong><small>${today.map(a=>a.title).join(', ')}</small></div>`);
+  if(soon.length)alerts.push(`<div class="alert warning"><strong>${soon.length} à J-1/J-2/J-3</strong><small>${soon.map(a=>a.title).join(', ')}</small></div>`);
+  document.getElementById('homeAlerts').innerHTML=alerts.join('');
+  const done=acts.filter(a=>a.status==='done').length,pct=acts.length?Math.round(done/acts.length*100):0;
+  document.getElementById('homeKpis').innerHTML=`<div class="kpi"><div class="klabel">Actions actives</div><div class="kvalue">${acts.length}</div></div>
+    <div class="kpi gold"><div class="klabel">Aujourd'hui</div><div class="kvalue">${today.length}</div></div>
+    <div class="kpi red"><div class="klabel">En retard</div><div class="kvalue">${over.length}</div></div>
+    <div class="kpi blue"><div class="klabel">Progression</div><div class="kvalue">${pct}%</div></div>`;
+  document.getElementById('homeEvents').innerHTML=activeEv.sort((a,b)=>a.end.localeCompare(b.end)).slice(0,5).map(ev=>{
+    const ea=(ev.actions||[]).filter(a=>a.status!=='cancelled');const ed=ea.filter(a=>a.status==='done').length;const eo=ea.filter(isOverdue).length;
+    const ep=ea.length?Math.round(ed/ea.length*100):0;const dl=daysUntil(ev.end,ev.time);
+    return `<div class="camp-card" data-eid="${ev.id}"><div class="camp-color" style="background:${ev.color||'#17633f'}"></div>
+      <div class="camp-body"><h3>${esc(ev.name)}</h3><div class="camp-meta">${fmtDate(ev.start)} → ${fmtDate(ev.end)} · J-${dl}</div>
+      <div class="camp-stats"><span class="camp-stat">${ea.length} actions</span><span class="camp-stat done">${ep}%</span>${eo?`<span class="camp-stat over">${eo} retard</span>`:''}</div></div></div>`;
+  }).join('')||'<div class="empty">Aucun événement actif</div>';
+  document.querySelectorAll('#homeEvents .camp-card').forEach(c=>c.onclick=()=>openEvent(c.dataset.eid));
+  const prio=[...over,...today,...soon].slice(0,8);
+  document.getElementById('homeActions').innerHTML=prio.length?prio.map(actionCard).join(''):'<div class="empty">Rien d’urgent</div>';
+  bindActionCards('#homeActions');
+}
+
+function renderEvents(){
+  const active=state.events.filter(e=>e.status!=='archived'),arch=state.events.filter(e=>e.status==='archived');
+  function card(ev){const ea=(ev.actions||[]).filter(a=>a.status!=='cancelled');const ed=ea.filter(a=>a.status==='done').length;const eo=ea.filter(isOverdue).length;const ep=ea.length?Math.round(ed/ea.length*100):0;
+    return `<div class="camp-card" data-eid="${ev.id}"><div class="camp-color" style="background:${ev.color||'#17633f'}"></div>
+      <div class="camp-body"><h3>${esc(ev.name)}</h3><div class="camp-meta">${fmtDate(ev.start)} → ${fmtDate(ev.end)}${ev.place?' · '+esc(ev.place):''}</div>
+      <div class="camp-stats"><span class="camp-stat">${ea.length} actions</span><span class="camp-stat done">${ep}%</span>${eo?`<span class="camp-stat over">${eo} retard</span>`:''}</div></div>
+      <button class="iconbtn" data-edit-ev="${ev.id}">✏️</button></div>`;}
+  document.getElementById('eventsList').innerHTML=(active.length?active.sort((a,b)=>a.end.localeCompare(b.end)).map(card).join(''):'<div class="empty"><h3>Aucun événement</h3></div>')+(arch.length?'<h2 class="section-title">Archives</h2>'+arch.map(card).join(''):'');
+  document.querySelectorAll('#eventsList .camp-card').forEach(c=>{c.onclick=e=>{if(e.target.closest('[data-edit-ev]'))return;openEvent(c.dataset.eid);};});
+  document.querySelectorAll('[data-edit-ev]').forEach(b=>b.onclick=e=>{e.stopPropagation();openEventModal(b.dataset.editEv);});
+}
+function openEvent(id){state.currentEventId=id;save();showView('dash');renderDash();}
+document.getElementById('backEvents').onclick=()=>showView('events');
+document.getElementById('newEventBtn').onclick=()=>openEventModal(null);
+
+function renderDash(){
+  const ev=eventById(state.currentEventId);if(!ev){showView('events');return;}
+  document.getElementById('dashTitle').textContent=ev.name;
+  document.getElementById('dashSub').textContent=`${fmtDate(ev.start)} – ${fmtDate(ev.end)}${ev.place?' · '+ev.place:''}`;
+  const dl=daysUntil(ev.end,ev.time);
+  document.getElementById('dashBadge').textContent=dl>0?'J-'+dl:(dl===0?'Jour J':'Terminé');
+  const acts=ev.actions||[],active=acts.filter(a=>a.status!=='cancelled');
+  const done=active.filter(a=>a.status==='done'),over=active.filter(isOverdue),today=active.filter(isToday),prog=active.filter(a=>a.status==='progress');
+  const pct=active.length?Math.round(done.length/active.length*100):0;
+  document.getElementById('dashKpis').innerHTML=`<div class="kpi"><div class="klabel">Actions</div><div class="kvalue">${active.length}</div></div>
+    <div class="kpi gold"><div class="klabel">Compte à rebours</div><div class="kvalue">${dl>0?'J-'+dl:(dl===0?'Jour J':'—')}</div></div>
+    <div class="kpi"><div class="klabel">Fait</div><div class="kvalue">${done.length}</div><div class="ksub">${pct}%</div></div>
+    <div class="kpi blue"><div class="klabel">En cours</div><div class="kvalue">${prog.length}</div></div>
+    <div class="kpi red"><div class="klabel">Retard</div><div class="kvalue">${over.length}</div></div>
+    <div class="kpi gold"><div class="klabel">Aujourd'hui</div><div class="kvalue">${today.length}</div></div>`;
+  document.getElementById('dashPct').textContent=pct+'%';document.getElementById('dashFill').style.width=pct+'%';
+  const alerts=[];if(over.length)alerts.push(`<div class="alert danger"><strong>${over.length} en retard</strong><small>${over.map(a=>a.title).join(', ')}</small></div>`);
+  if(today.length)alerts.push(`<div class="alert warning"><strong>${today.length} aujourd'hui</strong><small>${today.map(a=>a.title).join(', ')}</small></div>`);
+  document.getElementById('dashAlerts').innerHTML=alerts.join('');
+  let filtered=acts.slice();
+  if(dashFilter==='todo')filtered=filtered.filter(a=>a.status==='todo');
+  else if(dashFilter==='progress')filtered=filtered.filter(a=>a.status==='progress');
+  else if(dashFilter==='done')filtered=filtered.filter(a=>a.status==='done');
+  else if(dashFilter==='overdue')filtered=filtered.filter(isOverdue);
+  else if(dashFilter==='today')filtered=filtered.filter(isToday);
+  filtered.sort((a,b)=>a.date.localeCompare(b.date));
+  const withEv=filtered.map(a=>({...a,eventId:ev.id,eventName:ev.name}));
+  document.getElementById('dashTimeline').innerHTML=withEv.length?withEv.map(actionCard).join(''):'<div class="empty">Aucune action</div>';
+  bindActionCards('#dashTimeline');
+}
+document.querySelectorAll('#dashFilters .filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#dashFilters .filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');dashFilter=b.dataset.f;renderDash();};});
+document.getElementById('newActionBtn').onclick=()=>openActionModal(null,state.currentEventId);
+document.getElementById('editEventBtn').onclick=()=>openEventModal(state.currentEventId);
+
+function renderPlanning(){
+  let acts=allActions();
+  if(planFilter==='todo')acts=acts.filter(a=>a.status==='todo');
+  else if(planFilter==='overdue')acts=acts.filter(isOverdue);
+  else if(planFilter==='today')acts=acts.filter(isToday);
+  else if(planFilter==='week'){const t=todayStr();const in7=new Date();in7.setDate(in7.getDate()+7);const t7=in7.toISOString().slice(0,10);acts=acts.filter(a=>a.date>=t&&a.date<=t7&&a.status!=='cancelled'&&a.status!=='done');}
+  else acts=acts.filter(a=>a.status!=='cancelled');
+  acts.sort((a,b)=>a.date.localeCompare(b.date));
+  renderMiniCal('globalCal',acts[0]?acts[0].date:todayStr(),allActions());
+  document.getElementById('planTimeline').innerHTML=acts.length?acts.map(actionCard).join(''):'<div class="empty">Aucune action</div>';
+  bindActionCards('#planTimeline');
+}
+document.querySelectorAll('#planFilters .filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#planFilters .filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');planFilter=b.dataset.f;renderPlanning();};});
+document.getElementById('newGlobalActionBtn').onclick=()=>openActionModal(null,state.events[0]?.id);
+
+function renderMiniCal(elId,refDate,acts){
+  const[y,m]=refDate.split('-').map(Number);const first=new Date(y,m-1,1);const startDay=(first.getDay()+6)%7;const dim=new Date(y,m,0).getDate();
+  const months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const has={};acts.forEach(a=>{if(a.date.startsWith(`${y}-${String(m).padStart(2,'0')}`))has[+a.date.slice(8)]=true;});
+  const today=todayStr();let html=`<div style="font-size:.78rem;font-weight:800;margin-bottom:7px">${months[m-1]} ${y}</div>`;
+  html+=['L','M','M','J','V','S','D'].map(d=>`<div class="head">${d}</div>`).join('');
+  for(let i=0;i<startDay;i++)html+='<div class="empty"></div>';
+  for(let d=1;d<=dim;d++){const ds=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;const cls=[has[d]?'has':'',ds===today?'today':''].filter(Boolean).join(' ');html+=`<div class="${cls}">${d}</div>`;}
+  document.getElementById(elId).innerHTML=html;
+}
+
+function renderPoles(){
+  const acts=allActions().filter(a=>a.status!=='cancelled');
+  document.getElementById('polesList').innerHTML=POLES.map(p=>{
+    const asOwner=acts.filter(a=>a.ownerPole===p.id);const asConc=acts.filter(a=>(a.concernedPoles||[]).includes(p.id)&&a.ownerPole!==p.id);
+    const over=asOwner.filter(isOverdue).length;const done=asOwner.filter(a=>a.status==='done').length;
+    return `<div class="pole-card" data-pole="${p.id}"><div class="pole-color" style="background:${p.color}"></div>
+      <div class="camp-body"><h3>${p.label}</h3><div class="camp-meta">${asOwner.length} en propriété · ${asConc.length} concerné(s)</div>
+      <div class="camp-stats"><span class="camp-stat done">${done} fait</span>${over?`<span class="camp-stat over">${over} retard</span>`:''}</div></div></div>`;
+  }).join('');
+  document.querySelectorAll('.pole-card').forEach(c=>c.onclick=()=>openPole(c.dataset.pole));
+}
+function openPole(poleId){
+  state.currentPole=poleId;document.getElementById('polesList').style.display='none';document.getElementById('poleDetail').style.display='block';
+  const p=poleById(poleId);document.getElementById('poleTitle').textContent=p.label;
+  const acts=allActions().filter(a=>a.status!=='cancelled');
+  const owner=acts.filter(a=>a.ownerPole===poleId);const conc=acts.filter(a=>(a.concernedPoles||[]).includes(poleId));
+  document.getElementById('poleKpis').innerHTML=`<div class="kpi"><div class="klabel">Propriétaire</div><div class="kvalue">${owner.length}</div></div>
+    <div class="kpi blue"><div class="klabel">Concerné</div><div class="kvalue">${conc.length}</div></div>
+    <div class="kpi red"><div class="klabel">Retard</div><div class="kvalue">${owner.filter(isOverdue).length}</div></div>
+    <div class="kpi gold"><div class="klabel">Aujourd'hui</div><div class="kvalue">${owner.filter(isToday).length}</div></div>`;
+  let list=acts.filter(a=>a.ownerPole===poleId||(a.concernedPoles||[]).includes(poleId));
+  if(poleFilter==='owner')list=list.filter(a=>a.ownerPole===poleId);
+  else if(poleFilter==='concerned')list=list.filter(a=>(a.concernedPoles||[]).includes(poleId)&&a.ownerPole!==poleId);
+  else if(poleFilter==='todo')list=list.filter(a=>a.status==='todo');
+  else if(poleFilter==='overdue')list=list.filter(isOverdue);
+  list.sort((a,b)=>a.date.localeCompare(b.date));
+  document.getElementById('poleTimeline').innerHTML=list.length?list.map(actionCard).join(''):'<div class="empty">Aucune action</div>';
+  bindActionCards('#poleTimeline');
+}
+document.getElementById('backPoles').onclick=()=>{state.currentPole=null;document.getElementById('polesList').style.display='';document.getElementById('poleDetail').style.display='none';renderPoles();};
+document.querySelectorAll('#poleFilters .filter').forEach(b=>{b.onclick=()=>{document.querySelectorAll('#poleFilters .filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');poleFilter=b.dataset.f;if(state.currentPole)openPole(state.currentPole);};});
+
+function renderSettings(){
+  const p=getProfile();document.getElementById('userName').value=p.name||'';
+  document.getElementById('respList').innerHTML=state.responsibles.map(r=>
+    `<div class="resp-item"><span>${esc(r.name)}</span><button class="btn dangerBtn" data-del-resp="${r.id}" style="min-height:34px;padding:3px 9px">✕</button></div>`
+  ).join('')||'<div class="empty" style="padding:10px">Aucun responsable</div>';
+  document.querySelectorAll('[data-del-resp]').forEach(b=>b.onclick=()=>{if(confirm('Supprimer ?')){state.responsibles=state.responsibles.filter(x=>x.id!==b.dataset.delResp);save();renderSettings();toast('Supprimé');}});
+}
+document.getElementById('saveProfile').onclick=()=>{setProfile({name:document.getElementById('userName').value.trim()});toast('Profil enregistré');};
+document.getElementById('addRespBtn').onclick=()=>{const name=document.getElementById('newRespName').value.trim();if(!name)return toast('Nom requis');state.responsibles.push({id:uid(),name});document.getElementById('newRespName').value='';save();renderSettings();toast('Ajouté');};
+document.getElementById('exportBtn').onclick=()=>{const data={version:1,exported:new Date().toISOString(),state,profile:getProfile()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`kanton-export-${todayStr()}.json`;a.click();toast('Export OK');};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(d.state&&d.state.events){if(confirm('Remplacer toutes les données ?')){state=d.state;if(d.profile)setProfile(d.profile);save();showView('home');toast('Import OK');}}else toast('Fichier invalide');}catch(err){toast('Erreur fichier');}};r.readAsText(f);e.target.value='';};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Tout réinitialiser ?')){localStorage.removeItem(STORAGE);localStorage.removeItem(HIST);load();showView('home');toast('Réinitialisé');}};
+
+function openEventModal(id){
+  editingEventId=id||null;document.getElementById('eventModalTitle').textContent=id?"Modifier l'événement":'Nouvel événement';
+  document.getElementById('eventForm').reset();
+  if(id){const ev=eventById(id);if(ev){document.getElementById('eName').value=ev.name||'';document.getElementById('eStart').value=ev.start||'';document.getElementById('eEnd').value=ev.end||'';document.getElementById('eTime').value=ev.time||'14:00';document.getElementById('ePlace').value=ev.place||'';document.getElementById('eDesc').value=ev.desc||'';document.getElementById('eColor').value=ev.color||'#17633f';document.getElementById('eStatus').value=ev.status||'active';}}
+  else{document.getElementById('eStart').value=todayStr();document.getElementById('eEnd').value=todayStr();}
+  document.getElementById('eventModal').classList.add('open');
+}
+document.getElementById('eventForm').onsubmit=e=>{
+  e.preventDefault();
+  const data={name:document.getElementById('eName').value.trim(),start:document.getElementById('eStart').value,end:document.getElementById('eEnd').value,time:document.getElementById('eTime').value||'14:00',place:document.getElementById('ePlace').value.trim(),desc:document.getElementById('eDesc').value.trim(),color:document.getElementById('eColor').value,status:document.getElementById('eStatus').value};
+  if(editingEventId){const ev=eventById(editingEventId);if(ev)Object.assign(ev,data);logH('Événement modifié',data.name);toast('Mis à jour');}
+  else{state.events.push({id:uid(),...data,actions:[]});logH('Événement créé',data.name);toast('Créé');}
+  save();document.getElementById('eventModal').classList.remove('open');refreshCurrent();if(document.getElementById('view-events').classList.contains('active'))renderEvents();
+};
+
+function fillActionSelects(pre){
+  document.getElementById('aEvent').innerHTML=state.events.map(ev=>`<option value="${ev.id}">${esc(ev.name)}</option>`).join('');
+  if(pre)document.getElementById('aEvent').value=pre;
+  document.getElementById('aOwner').innerHTML=POLES.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+  document.getElementById('aConcerned').innerHTML=POLES.map(p=>`<label><input type="checkbox" value="${p.id}"> ${p.short}</label>`).join('');
+  document.getElementById('aResp').innerHTML='<option value="">— Aucun —</option>'+state.responsibles.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join('');
+}
+function openActionModal(actionId,eventId){
+  editingActionId=actionId||null;
+  const ctx=eventId||state.currentEventId||state.events[0]?.id;
+  document.getElementById('actionModalTitle').textContent=actionId?"Modifier l'action":'Nouvelle action';
+  document.getElementById('actionForm').reset();fillActionSelects(ctx);
+  document.getElementById('aDate').value=todayStr();document.getElementById('aStatus').value='todo';
+  document.getElementById('aPrio').value='Moyenne';document.getElementById('aReminder').value='none';
+  document.getElementById('aTime').value='08:00';document.getElementById('aOwner').value='com';
+  if(actionId&&eventId){const ev=eventById(eventId);const a=ev?.actions?.find(x=>x.id==actionId);
+    if(a){document.getElementById('aEvent').value=eventId;document.getElementById('aDate').value=a.date;document.getElementById('aStatus').value=a.status||'todo';
+      document.getElementById('aTitle').value=a.title||'';document.getElementById('aDesc').value=a.desc||'';document.getElementById('aOwner').value=a.ownerPole||'com';
+      document.getElementById('aPrio').value=a.prio||'Moyenne';document.getElementById('aChannels').value=a.channels||'';
+      document.getElementById('aReminder').value=a.reminder||'none';document.getElementById('aTime').value=a.time||'08:00';
+      document.getElementById('aObjective').value=a.objective||'';document.getElementById('aResp').value=a.responsibleId||'';
+      (a.concernedPoles||[]).forEach(pid=>{const cb=document.querySelector(`#aConcerned input[value="${pid}"]`);if(cb)cb.checked=true;});}}
+  document.getElementById('actionModal').classList.add('open');
+}
+document.getElementById('actionForm').onsubmit=e=>{
+  e.preventDefault();
+  const eventId=document.getElementById('aEvent').value;const ev=eventById(eventId);if(!ev)return toast('Événement introuvable');
+  const concerned=[...document.querySelectorAll('#aConcerned input:checked')].map(c=>c.value);
+  const data={date:document.getElementById('aDate').value,status:document.getElementById('aStatus').value,title:document.getElementById('aTitle').value.trim(),
+    desc:document.getElementById('aDesc').value.trim(),ownerPole:document.getElementById('aOwner').value,concernedPoles:concerned,
+    prio:document.getElementById('aPrio').value,channels:document.getElementById('aChannels').value.trim(),reminder:document.getElementById('aReminder').value,
+    time:document.getElementById('aTime').value,objective:document.getElementById('aObjective').value.trim(),responsibleId:document.getElementById('aResp').value};
+  if(editingActionId){
+    let found=null,fromEv=null;state.events.forEach(e=>{const a=e.actions?.find(x=>x.id==editingActionId);if(a){found=a;fromEv=e;}});
+    if(found&&fromEv){if(fromEv.id===eventId)Object.assign(found,data);else{fromEv.actions=fromEv.actions.filter(x=>x.id!=editingActionId);const maxId=ev.actions.reduce((m,a)=>Math.max(m,a.id||0),0);ev.actions.push({id:found.id||maxId+1,...data});}}
+    logH('Action modifiée',data.title);toast('Mise à jour');
+  }else{const maxId=ev.actions.reduce((m,a)=>Math.max(m,a.id||0),0);ev.actions.push({id:maxId+1,...data});logH('Action créée',data.title);toast('Ajoutée');}
+  save();document.getElementById('actionModal').classList.remove('open');refreshCurrent();
+};
+
+document.getElementById('waBtn').onclick=()=>{
+  const ev=eventById(state.currentEventId);if(!ev)return;
+  const acts=(ev.actions||[]).filter(a=>a.status!=='cancelled');const done=acts.filter(a=>a.status==='done');const over=acts.filter(isOverdue);const today=acts.filter(isToday);
+  const lines=[`*${ev.name}* — Suivi`,`📅 ${new Date().toLocaleDateString('fr-FR')}`,'',`✅ Fait : ${done.length}/${acts.length}`,
+    over.length?`⚠️ Retard : ${over.map(a=>a.title).join(', ')}`:'✅ Aucun retard',today.length?`📌 Aujourd'hui : ${today.map(a=>a.title).join(', ')}`:'',
+    `🔥 ${fmtDate(ev.end)}${ev.time?' · '+ev.time:''}${ev.place?' · '+ev.place:''}`];
+  document.getElementById('waText').value=lines.filter(Boolean).join('\n');document.getElementById('waModal').classList.add('open');
+};
+document.getElementById('copyWa').onclick=()=>navigator.clipboard.writeText(document.getElementById('waText').value).then(()=>toast('Copié ✓')).catch(()=>toast('Copie impossible'));
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.close).classList.remove('open'));
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove('open');});
+
+load();showView('home');
+setInterval(()=>{if(document.getElementById('view-home').classList.contains('active'))renderHome();},60000);
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(console.warn));
+</script>
+</body>
+</html>
